@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Despido y Liquidación Final · Equipo Legal Capozzi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EEF0E7;
+    --paper-2: #E6E9DE;
+    --ink: #1F3327;
+    --ink-soft: #4B5A4F;
+    --rule: #C3CBB7;
+    --panel: #FFFFFF;
+    --brass: #A9761E;
+    --brass-deep: #8A5F17;
+    --brass-soft: #F3E8D2;
+    --alert: #8C3B2E;
+    --alert-soft: #F1E1DC;
+    --radius: 4px;
+    --serif: "Source Serif 4", Georgia, serif;
+    --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --shadow-soft: 0 1px 2px rgba(31,51,39,0.06);
+  }
+
+  *{ box-sizing: border-box; }
+  html{ -webkit-text-size-adjust: 100%; }
+  body{
+    margin:0;
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection{ background: var(--brass-soft); color: var(--ink); }
+
+  a{ color: var(--brass-deep); }
+
+  /* ---------- Header ---------- */
+  header.site{
+    background: var(--ink);
+    color: var(--paper);
+    padding: 18px clamp(16px, 4vw, 40px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap: wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand small{
+    display:block;
+    font-size: 11.5px;
+    letter-spacing:.02em;
+    color: #C9D4C6;
+    margin-top:1px;
+  }
+  .brand strong{
+    font-family: var(--serif);
+    font-weight:600;
+    font-size: 17px;
+    color:#F4F5EF;
+  }
+  .seal{ flex:0 0 auto; }
+  header.site .tagline{
+    font-family: var(--serif);
+    font-style: italic;
+    color:#C9D4C6;
+    font-size: 14.5px;
+  }
+
+  /* ---------- Layout ---------- */
+  main{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(20px, 4vw, 44px) clamp(16px, 4vw, 40px) 80px;
+  }
+  .intro{
+    max-width: 640px;
+    margin-bottom: 28px;
+  }
+  .intro h1{
+    font-family: var(--serif);
+    font-size: clamp(26px, 4vw, 34px);
+    font-weight: 600;
+    margin: 0 0 8px;
+    line-height:1.15;
+  }
+  .intro p{
+    margin:0;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns: minmax(0,1.5fr) minmax(320px, 1fr);
+    gap: 28px;
+    align-items:start;
+  }
+  @media (max-width: 900px){
+    .layout{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Form ---------- */
+  .section{
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 22px clamp(16px,3vw,26px) 26px;
+    margin-bottom: 22px;
+  }
+  .section h2{
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight:600;
+    margin: 0 0 4px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section .section-note{
+    font-size:13px;
+    color: var(--ink-soft);
+    margin: 8px 0 18px;
+  }
+
+  .field-grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 20px;
+  }
+  @media (max-width: 560px){
+    .field-grid{ grid-template-columns: 1fr; }
+  }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field.span-2{ grid-column: 1 / -1; }
+
+  label{
+    font-size: 13px;
+    font-weight:600;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  input[type="date"],
+  input[type="number"],
+  select{
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 9px 10px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--paper);
+    color: var(--ink);
+    width:100%;
+  }
+  input:focus, select:focus, summary:focus, button:focus, .info-icon:focus{
+    outline: 2px solid var(--brass);
+    outline-offset: 1px;
+  }
+  input[disabled], select[disabled]{
+    opacity:.5;
+    cursor:not-allowed;
+  }
+  .helper-text{
+    font-size:12px;
+    color: var(--ink-soft);
+    margin-top:2px;
+  }
+
+  /* toggle (Sí/No) */
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .toggle-row label{ margin:0; }
+  .switch{
+    position:relative;
+    display:inline-block;
+    width:42px;
+    height:24px;
+    flex:0 0 auto;
+  }
+  .switch input{ opacity:0; width:0; height:0; }
+  .switch .track{
+    position:absolute; inset:0;
+    background: var(--rule);
+    border-radius: 999px;
+    transition: background .15s ease;
+    cursor:pointer;
+  }
+  .switch .track::before{
+    content:"";
+    position:absolute;
+    height:18px; width:18px;
+    left:3px; top:3px;
+    background:#fff;
+    border-radius:50%;
+    transition: transform .15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,.25);
+  }
+  .switch input:checked + .track{ background: var(--ink); }
+  .switch input:checked + .track::before{ transform: translateX(18px); }
+  .switch input:disabled + .track{ opacity:.4; cursor:not-allowed; }
+
+  .subgroup{
+    border-top: 1px dashed var(--rule);
+    margin-top:14px;
+    padding-top:14px;
+  }
+  .subgroup + .subgroup{ margin-top:10px; }
+
+  .preaviso-badge{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:14px;
+    padding: 10px 16px;
+    background: var(--brass-soft);
+    border: 1px solid var(--brass);
+    border-radius: var(--radius);
+  }
+  .preaviso-badge-num{
+    font-family: var(--serif);
+    font-weight:700;
+    font-size: 30px;
+    color: var(--brass-deep);
+    line-height:1;
+  }
+  .preaviso-badge-text{
+    font-size: 13.5px;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .preaviso-badge-text em{ font-style:italic; color: var(--ink-soft); }
+
+  /* details / rubros adicionales */
+  details.extra{
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--panel);
+    margin-bottom: 22px;
+    overflow:hidden;
+  }
+  details.extra summary{
+    cursor:pointer;
+    list-style:none;
+    padding: 16px 22px;
+    font-family: var(--serif);
+    font-weight:600;
+    font-size:17px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  details.extra summary::-webkit-details-marker{ display:none; }
+  details.extra summary .chev{
+    font-size:13px;
+    color: var(--ink-soft);
+    transition: transform .15s ease;
+    font-family: var(--sans);
+  }
+  details.extra[open] summary .chev{ transform: rotate(90deg); }
+  details.extra summary .sub{
+    font-family: var(--sans);
+    font-weight:400;
+    font-size:12.5px;
+    color: var(--ink-soft);
+    display:block;
+    margin-top:2px;
+  }
+  details.extra .extra-body{
+    padding: 4px 22px 22px;
+    border-top: 1px solid var(--rule);
+  }
+  .rubro-block{
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .rubro-block:last-child{ border-bottom:none; }
+
+  /* info tooltip */
+  .info-icon{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:16px; height:16px;
+    border-radius:50%;
+    border: 1px solid var(--brass);
+    color: var(--brass-deep);
+    font-size:11px;
+    font-family: var(--serif);
+    font-style:italic;
+    font-weight:600;
+    background: var(--brass-soft);
+    cursor:help;
+    position:relative;
+    flex:0 0 auto;
+  }
+  .info-icon .bubble{
+    position:absolute;
+    z-index:20;
+    bottom: calc(100% + 8px);
+    left:50%;
+    transform: translateX(-50%);
+    width:250px;
+    background: var(--ink);
+    color:#F4F5EF;
+    font-size:12.5px;
+    font-weight:400;
+    font-style:normal;
+    line-height:1.45;
+    padding:10px 12px;
+    border-radius: var(--radius);
+    opacity:0;
+    visibility:hidden;
+    transition: opacity .12s ease;
+    pointer-events:none;
+  }
+  .info-icon .bubble::after{
+    content:"";
+    position:absolute;
+    top:100%; left:50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--ink);
+  }
+  .info-icon:hover .bubble,
+  .info-icon:focus .bubble{
+    opacity:1;
+    visibility:visible;
+  }
+  @media (max-width: 560px){
+    .info-icon .bubble{ left:auto; right:-8px; transform:none; width:220px; }
+    .info-icon .bubble::after{ left:auto; right:12px; transform:none; }
+  }
+
+  /* ---------- Result / receipt ---------- */
+  .result-wrap{ position: sticky; top: 20px; min-width: 0; }
+  .receipt{
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow:hidden;
+    container-type: inline-size;
+  }
+  .receipt-head{
+    background: var(--ink);
+    color: var(--paper);
+    padding: 18px 22px;
+  }
+  .receipt-head h2{
+    font-family: var(--serif);
+    font-size:19px;
+    margin:0 0 10px;
+    font-weight:600;
+  }
+  .receipt-head .caratula-line{
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13.5px;
+    color:#D7DECB;
+    margin: -4px 0 12px;
+  }
+  .receipt-head .kv{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    padding:3px 0;
+    color:#D7DECB;
+  }
+  .receipt-head .kv b{ color:#F4F5EF; font-weight:600; }
+
+  .receipt-body{ padding: 6px 22px 4px; }
+  .line{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:9px 0;
+    border-bottom: 1px dashed var(--rule);
+    font-size:14px;
+  }
+  .line .lbl{ display:flex; align-items:center; gap:6px; color: var(--ink); }
+  .line .val{ font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .line.zero .val{ color:#9AA396; }
+  .subtotal-line{
+    display:flex; justify-content:space-between;
+    padding: 10px 0;
+    font-weight:600;
+    font-size:14px;
+    background: var(--paper-2);
+    margin: 4px -22px;
+    padding-left:22px; padding-right:22px;
+  }
+  .group-title{
+    font-size:11.5px;
+    text-transform: none;
+    color: var(--brass-deep);
+    font-weight:600;
+    margin: 16px 0 2px;
+  }
+
+  .total-block{
+    margin: 14px 0 0;
+    padding: 18px 22px 20px;
+    background: var(--brass-soft);
+    border-top: 2px solid var(--brass);
+    display:flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .total-block .lbl{
+    font-family: var(--sans);
+    font-weight:600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--ink-soft);
+  }
+  .total-block .val{
+    font-family: var(--serif);
+    font-weight:700;
+    font-size: clamp(20px, 9cqw, 30px);
+    font-variant-numeric: tabular-nums;
+    transition: color .3s ease;
+    overflow-wrap: anywhere;
+    color: var(--brass-deep);
+    min-width: 0;
+    max-width: 100%;
+  }
+  .total-block .val.flash{ color: var(--ink); }
+
+  .actions{
+    padding: 16px 22px 20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  button.action{
+    font-family: var(--sans);
+    font-size:13.5px;
+    font-weight:600;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor:pointer;
+    transition: background .12s ease, transform .05s ease;
+    flex:1 1 auto;
+  }
+  button.action:hover{ background:#2C4536; }
+  button.action:active{ transform: translateY(1px); }
+  button.action.secondary{
+    background: var(--panel);
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+  button.action.secondary:hover{ background: var(--paper-2); }
+  .copy-feedback{
+    font-size:12.5px;
+    color: var(--brass-deep);
+    padding: 0 22px 14px;
+    min-height: 16px;
+  }
+
+  /* ---------- Disclaimer / footer ---------- */
+  .disclaimer{
+    max-width: 1180px;
+    margin: 8px auto 0;
+    padding: 0 clamp(16px,4vw,40px);
+  }
+  .disclaimer .box{
+    border-left: 3px solid var(--alert);
+    background: var(--alert-soft);
+    color: #5B2A21;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    line-height:1.55;
+  }
+  .disclaimer .box strong{ color: var(--alert); }
+
+  footer.site{
+    max-width: 1180px;
+    margin: 26px auto 0;
+    padding: 22px clamp(16px,4vw,40px) 60px;
+    border-top: 1px solid var(--rule);
+    display:flex;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  footer.site .authorship strong{
+    font-family: var(--serif);
+    color: var(--ink);
+    display:block;
+    font-size:15px;
+    margin-bottom:2px;
+  }
+  .support-note{
+    max-width: 340px;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size:12.5px;
+    line-height:1.5;
+  }
+  .support-note .alias{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:6px;
+    background: var(--brass-soft);
+    border: 1px solid var(--brass);
+    border-radius: var(--radius);
+    padding: 5px 10px;
+    font-family: var(--sans);
+    font-weight:600;
+    color: var(--brass-deep);
+    cursor:pointer;
+  }
+  .support-note .alias:hover{ background:#EFDFC0; }
+
+  /* ---------- Mobile sticky total ---------- */
+  .mobile-sticky{
+    display:none;
+    position: fixed;
+    left:0; right:0; bottom:0;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 18px;
+    align-items:center;
+    justify-content:space-between;
+    z-index: 30;
+    box-shadow: 0 -2px 8px rgba(0,0,0,.15);
+  }
+  .mobile-sticky .amount{
+    font-family: var(--serif);
+    font-weight:700;
+    font-size:17px;
+  }
+  .mobile-sticky button{
+    background: var(--brass);
+    color: var(--ink);
+    border:none;
+    font-weight:600;
+    font-size:13px;
+    padding:8px 14px;
+    border-radius: var(--radius);
+  }
+  @media (max-width: 900px){
+    .mobile-sticky{ display:flex; }
+    main{ padding-bottom: 90px; }
+    .result-wrap{ position:static; }
+  }
+
+  /* ---------- Print ---------- */
+  .print-only{ display:none; }
+
+  @page{ size: A4; margin: 14mm 16mm; }
+
+  @media print{
+    * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+    header.site, .intro, .layout > .form-col, .disclaimer, footer.site,
+    .mobile-sticky, .actions, .copy-feedback{
+      display:none !important;
+    }
+    .print-only{ display:block !important; }
+
+    html, body{ background:#fff; font-size: 11.5px; }
+    main{ padding: 0 !important; max-width: none; }
+    .layout{ display:block; gap:0; }
+    .result-wrap{ position:static; }
+
+    .receipt{ border:none; }
+
+    /* encabezado de impresión: sello + autoría + fecha, propio del documento impreso */
+    .print-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #1F3327;
+    }
+    .print-header-text{ flex:1 1 auto; display:flex; flex-direction:column; }
+    .print-header-text strong{
+      font-family: var(--serif);
+      font-size: 15px;
+      color:#1F3327;
+    }
+    .print-header-text span{
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 12px;
+      color:#3E4F44;
+    }
+    .print-header-date{
+      font-size: 10px;
+      color:#5B6B60;
+      white-space:nowrap;
+    }
+
+    .receipt-head{ background:#fff !important; color:#000 !important; padding:0 0 8px; }
+    .receipt-head h2{ display:none; }
+    .receipt-head .caratula-line{
+      color:#000 !important;
+      font-weight:700;
+      text-transform: uppercase;
+      font-style: normal;
+      font-size: 14px;
+      margin: 0 0 8px;
+    }
+    .receipt-head .kv{ color:#000 !important; padding: 1.5px 0; font-size: 11.5px; }
+    .receipt-head .kv b{ color:#000 !important; }
+
+    .receipt-body{ padding: 4px 0 0; }
+    .group-title{
+      color:#1F3327 !important;
+      font-size: 10.5px;
+      letter-spacing:.03em;
+      text-transform: uppercase;
+      border-bottom: 1px solid #C3CBB7;
+      padding-bottom: 2px;
+      margin: 10px 0 2px;
+    }
+    .line{ padding: 3px 0; font-size: 11.5px; border-bottom: 1px dotted #C3CBB7; }
+    .line.zero .val{ color:#8A9285 !important; }
+
+    .subtotal-line{
+      background:#fff !important;
+      margin: 2px 0 0;
+      padding: 5px 0;
+      border-top: 1px solid #1F3327;
+      border-bottom: none;
+      font-size: 11.5px;
+    }
+
+    .total-block{
+      background:#fff !important;
+      margin: 10px 0 0;
+      padding: 8px 0 6px;
+      border-top: 2px solid #1F3327;
+      border-bottom: 2px solid #1F3327;
+      page-break-inside: avoid;
+    }
+    .total-block .lbl{ font-size: 14px; }
+    .total-block .val{ font-size: 19px; color:#8A5F17 !important; }
+
+    .print-footer{
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px solid #C3CBB7;
+      page-break-inside: avoid;
+    }
+    .print-disclaimer{
+      font-size: 9.5px;
+      line-height: 1.5;
+      color:#3E4F44;
+      font-style: italic;
+      margin: 0 0 6px;
+    }
+    .print-disclaimer strong{ font-style:normal; color:#1F3327; }
+    .print-authorship{
+      font-family: var(--serif);
+      font-size: 10.5px;
+      color:#1F3327;
+      margin:0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="brand">
+    <svg class="seal" width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="21" cy="21" r="19.5" stroke="#A9761E" stroke-width="1.4"/>
+      <circle cx="21" cy="21" r="15.5" stroke="#A9761E" stroke-width="1"/>
+      <text x="21" y="26" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" font-weight="600" fill="#F4F5EF">ELC</text>
+    </svg>
+    <div>
+      <strong>Equipo Legal Capozzi</strong>
+      <small>Herramientas para el ejercicio del derecho laboral</small>
+    </div>
+  </div>
+  <div class="tagline">Calculadora de despido y liquidación final</div>
+</header>
+
+<main>
+  <div class="intro">
+    <h1>Calculá la indemnización y la liquidación final</h1>
+    <p>Cargá los datos del caso y el resultado se actualiza solo. Al final podés copiarlo para Word, imprimirlo o enviarlo por correo.</p>
+  </div>
+
+  <div class="layout">
+    <div class="form-col">
+
+      <!-- DATOS DEL CASO -->
+      <section class="section">
+        <h2>Datos del caso</h2>
+        <div class="field-grid">
+          <div class="field span-2">
+            <label for="regimenLaboral">Marco normativo
+              <span class="info-icon" tabindex="0">i<span class="bubble">Casas particulares tiene su propio preaviso (en días) y causales de fallecimiento distintas a la LCT.</span></span>
+            </label>
+            <select id="regimenLaboral">
+              <option value="lct">LCT (régimen general)</option>
+              <option value="casas_particulares">Personal de casas particulares (Ley 26.844)</option>
+            </select>
+          </div>
+          <div class="field span-2">
+            <label for="caratula">Carátula o referencia del caso (opcional)</label>
+            <input type="text" id="caratula" placeholder='Ej.: "Pereyra, Juana c/ Cencosud S.A. s/ despido"'>
+          </div>
+          <div class="field">
+            <label for="ingreso">Fecha de ingreso</label>
+            <input type="text" id="ingreso" inputmode="numeric" autocomplete="off" placeholder="DD/MM/AAAA">
+          </div>
+          <div class="field">
+            <label for="egreso">Fecha de egreso</label>
+            <input type="text" id="egreso" inputmode="numeric" autocomplete="off" placeholder="DD/MM/AAAA">
+          </div>
+          <div class="field">
+            <label for="remuneracion">Remuneración (MRMNH)
+              <span class="info-icon" tabindex="0">i<span class="bubble">Mejor remuneración mensual, normal y habitual — la base de todos los cálculos.</span></span>
+            </label>
+            <input type="text" id="remuneracion" inputmode="decimal" autocomplete="off" placeholder="0,00">
+          </div>
+          <div class="field" id="campo-sac">
+            <label for="sacBase">SAC incluido en la base
+              <span class="info-icon" tabindex="0">i<span class="bubble">Solo para el régimen anterior a la Ley 27.802. Completalo si el SAC integra la base indemnizatoria en tu caso.</span></span>
+            </label>
+            <input type="number" id="sacBase" min="0" step="0.01" value="0">
+          </div>
+          <div class="field" id="campo-tope">
+            <label for="tope">Tope convencional (opcional)
+              <span class="info-icon" tabindex="0">i<span class="bubble">67% del promedio del convenio aplicable (doctrina Vizzoti). Si la base lo supera, se usa este tope. Dejalo en 0 si no corresponde.</span></span>
+            </label>
+            <input type="number" id="tope" min="0" step="0.01" value="0">
+          </div>
+        </div>
+        <p class="helper-text" id="periodos-info">Períodos indemnizatorios (art. 245 LCT): —</p>
+      </section>
+
+      <!-- PARAMETROS DEL DESPIDO -->
+      <section class="section">
+        <h2>Parámetros del despido</h2>
+
+        <div class="field span-2" style="margin-bottom:16px;">
+          <label for="situacionEspecial">Situación especial
+            <span class="info-icon" tabindex="0">i<span class="bubble" id="situacion-tooltip">Marcá una causal especial si corresponde — modifica antigüedad, preaviso e integración. Ninguna se detecta sola.</span></span>
+          </label>
+          <select id="situacionEspecial">
+            <option value="general">Régimen general</option>
+            <option value="fuerza_mayor">Fuerza mayor / falta de trabajo (art. 247 LCT)</option>
+            <option value="fallecimiento">Fallecimiento del trabajador (art. 248 LCT)</option>
+            <option value="periodo_prueba">Período de prueba</option>
+          </select>
+          <p class="helper-text" id="situacion-nota" style="display:none;"></p>
+        </div>
+
+        <div class="subgroup">
+          <div class="toggle-row">
+            <label for="preavisoFlag" id="preaviso-label">¿Corresponde preaviso? (art. 232 LCT)
+              <span class="info-icon" tabindex="0">i<span class="bubble">Dejalo en "Sí" salvo que el empleador ya haya dado el aviso y se haya trabajado ese período.</span></span>
+            </label>
+            <label class="switch"><input type="checkbox" id="preavisoFlag" checked><span class="track"></span></label>
+          </div>
+          <div class="preaviso-badge" id="preaviso-badge">
+            <span class="preaviso-badge-num" id="preaviso-meses">—</span>
+            <span class="preaviso-badge-text">
+              <span id="preaviso-unidad">mes(es) de preaviso</span> <em id="preaviso-articulo">(art. 231 LCT)</em>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RUBROS ADICIONALES -->
+      <details class="extra">
+        <summary>
+          <span>Rubros adicionales
+            <span class="sub">Arts. 8, 9, 10 y 15 de la ley 24.013 (derogados, disponibles para casos anteriores) · art. 1 y 2 de la ley 25.323 · art. 80 LCT</span>
+          </span>
+          <span class="chev">▸</span>
+        </summary>
+        <div class="extra-body">
+
+          <div class="rubro-block">
+            <div class="toggle-row">
+              <label for="art8Flag">Falta de registración total (art. 8, L. 24.013)</label>
+              <label class="switch"><input type="checkbox" id="art8Flag"><span class="track"></span></label>
+            </div>
+            <div class="field-grid" style="margin-top:10px;">
+              <div class="field"><label for="art8Cant">Cantidad de remuneraciones</label><input type="number" id="art8Cant" min="0" step="1" value="0"></div>
+            </div>
+          </div>
+
+          <div class="rubro-block">
+            <div class="toggle-row">
+              <label for="art9Flag">Ingreso posterior al real (art. 9, L. 24.013)</label>
+              <label class="switch"><input type="checkbox" id="art9Flag"><span class="track"></span></label>
+            </div>
+            <div class="field-grid" style="margin-top:10px;">
+              <div class="field"><label for="art9Cant">Cantidad de remuneraciones</label><input type="number" id="art9Cant" min="0" step="1" value="0"></div>
+            </div>
+          </div>
+
+          <div class="rubro-block">
+            <div class="toggle-row">
+              <label for="art10Flag">Remuneración menor a la percibida (art. 10, L. 24.013)</label>
+              <label class="switch"><input type="checkbox" id="art10Flag"><span class="track"></span></label>
+            </div>
+            <div class="field-grid" style="margin-top:10px;">
+              <div class="field"><label for="art10Porcion">Porción de rem. no registrada</label><input type="number" id="art10Porcion" min="0" step="0.01" value="0"></div>
+              <div class="field"><label for="art10Meses">Meses desde la deficiencia registral</label><input type="number" id="art10Meses" min="0" step="1" value="0"></div>
+            </div>
+          </div>
+
+          <div class="rubro-block">
+            <div class="toggle-row">
+              <label for="art15Flag">Agravamiento (art. 15, L. 24.013)</label>
+              <label class="switch"><input type="checkbox" id="art15Flag"><span class="track"></span></label>
+            </div>
+          </div>
+
+          <div class="rubro-block">
+            <div class="toggle-row">
+              <label for="art1Flag">Art. 1, ley 25.323</label>
+              <label class="switch"><input type="checkbox" id="art1Flag"><span class="track"></span></label>
+            </div>
+          </div>
+
+          <div class="rubro-block">
+            <div class="toggle-row">
+              <label for="art2Flag">Art. 2, ley 25.323</label>
+              <label class="switch"><input type="checkbox" id="art2Flag"><span class="track"></span></label>
+            </div>
+          </div>
+
+          <div class="rubro-block">
+            <div class="toggle-row">
+              <label for="art80Flag">Art. 80 LCT (entrega de certificados)</label>
+              <label class="switch"><input type="checkbox" id="art80Flag"><span class="track"></span></label>
+            </div>
+          </div>
+
+        </div>
+      </details>
+
+      <section class="section">
+        <h2>Datos para el documento impreso (opcional)</h2>
+        <p class="section-note">
+          Si completás esto, va a aparecer al pie de la liquidación impresa (y en el texto para copiar o enviar
+          por email) en lugar de "Equipo Legal Capozzi".
+        </p>
+        <div class="field-grid">
+          <div class="field span-2">
+            <label for="firmaNombre">Nombre / estudio jurídico</label>
+            <input type="text" id="firmaNombre" placeholder="Ej.: Dr. Juan Pérez — Estudio Pérez & Asociados">
+          </div>
+          <div class="field">
+            <label for="firmaEmail">Email</label>
+            <input type="email" id="firmaEmail" placeholder="juan@estudio.com" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="firmaTelefono">Teléfono</label>
+            <input type="text" id="firmaTelefono" placeholder="011 1234-5678" autocomplete="off">
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="result-col">
+      <div class="result-wrap" id="resultado">
+        <div class="receipt">
+          <div class="print-header print-only">
+            <div class="print-seal">
+              <svg width="34" height="34" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="21" cy="21" r="19.5" stroke="#1F3327" stroke-width="1.4"/>
+                <circle cx="21" cy="21" r="15.5" stroke="#1F3327" stroke-width="1"/>
+                <text x="21" y="26" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" font-weight="600" fill="#1F3327">ELC</text>
+              </svg>
+            </div>
+            <div class="print-header-text">
+              <strong>Equipo Legal Capozzi</strong>
+              <span>Liquidación por despido y liquidación final</span>
+            </div>
+            <div class="print-header-date" id="print-date"></div>
+          </div>
+
+          <div class="receipt-head">
+            <h2>Liquidación</h2>
+            <p class="caratula-line" id="r-caratula-line" style="display:none;"></p>
+            <div class="kv"><span>Ingreso</span><b id="r-ingreso">—</b></div>
+            <div class="kv"><span>Egreso</span><b id="r-egreso">—</b></div>
+            <div class="kv"><span>Remuneración</span><b id="r-rem">—</b></div>
+            <div class="kv"><span>Períodos</span><b id="r-periodos">—</b></div>
+          </div>
+          <div class="receipt-body">
+
+            <p class="group-title">Rubros indemnizatorios</p>
+            <div class="line"><span class="lbl">Antigüedad <span id="r-antig-nota" style="font-size:11px;color:var(--ink-soft);font-weight:400;"></span></span><span class="val" id="r-antig">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Preaviso</span><span class="val" id="r-preaviso">$ 0,00</span></div>
+            <div class="line"><span class="lbl">SAC s/ preaviso</span><span class="val" id="r-sacpreaviso">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Integración mes</span><span class="val" id="r-integracion">$ 0,00</span></div>
+            <div class="line"><span class="lbl">SAC s/ integración</span><span class="val" id="r-sacintegracion">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Art. 8 L.24.013</span><span class="val" id="r-art8">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Art. 9 L.24.013</span><span class="val" id="r-art9">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Art. 10 L.24.013</span><span class="val" id="r-art10">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Art. 15 L.24.013</span><span class="val" id="r-art15">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Art. 1 L.25.323</span><span class="val" id="r-art1">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Art. 2 L.25.323</span><span class="val" id="r-art2">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Art. 80 LCT</span><span class="val" id="r-art80">$ 0,00</span></div>
+            <div class="subtotal-line"><span>Subtotal rubros indemnizatorios</span><span id="r-subtotal-rubros">$ 0,00</span></div>
+
+            <p class="group-title">Liquidación final</p>
+            <div class="line"><span class="lbl">Días trabajados del mes de despido</span><span class="val" id="r-liqdias">$ 0,00</span></div>
+            <div class="line"><span class="lbl">SAC s/ días trabajados</span><span class="val" id="r-sacdias">$ 0,00</span></div>
+            <div class="line"><span class="lbl">Vacaciones proporcionales</span><span class="val" id="r-vacaciones">$ 0,00</span></div>
+            <div class="line"><span class="lbl">SAC s/ vacaciones proporcionales</span><span class="val" id="r-sacvac">$ 0,00</span></div>
+            <div class="line"><span class="lbl">SAC proporcional del semestre</span><span class="val" id="r-sacsem">$ 0,00</span></div>
+            <div class="subtotal-line"><span>Subtotal liquidación final</span><span id="r-subtotal-liq">$ 0,00</span></div>
+
+          </div>
+
+          <div class="total-block">
+            <span class="lbl">Total a percibir</span>
+            <span class="val" id="r-total">$ 0,00</span>
+          </div>
+
+          <div class="print-footer print-only">
+            <p class="print-disclaimer">
+              <strong>Aviso:</strong> los valores de esta liquidación son estimativos y se ofrecen a título orientativo.
+              No constituyen asesoramiento legal ni reemplazan el análisis profesional del caso concreto, la revisión
+              del convenio colectivo aplicable ni la verificación de la normativa vigente al momento del cálculo.
+              El Equipo Legal Capozzi no asume responsabilidad por el uso que se dé a estos resultados.
+            </p>
+            <p class="print-authorship" id="print-authorship">Equipo Legal Capozzi — Herramientas para el ejercicio del derecho laboral</p>
+          </div>
+
+          <div class="actions">
+            <button class="action" id="btn-copiar" type="button">Copiar para Word</button>
+            <button class="action secondary" id="btn-imprimir" type="button">Imprimir</button>
+            <button class="action secondary" id="btn-email" type="button">Enviar por email</button>
+          </div>
+          <div class="copy-feedback" id="copy-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <div class="box">
+      <strong>Aviso:</strong> los valores que arroja esta calculadora son estimativos y se ofrecen a título orientativo. No constituyen asesoramiento legal ni reemplazan el análisis profesional del caso concreto, la revisión del convenio colectivo aplicable ni la verificación de la normativa vigente al momento del cálculo. El Equipo Legal Capozzi no asume responsabilidad por el uso que se dé a estos resultados.
+    </div>
+  </div>
+
+  <footer class="site">
+    <div class="authorship">
+      <strong>Equipo Legal Capozzi</strong>
+      Calculadora de despido y liquidación final — uso interno y para colegas.
+    </div>
+    <div class="support-note">
+      Si esta calculadora te resultó útil y querés invitarme un cafecito, este es mi alias de Mercado Pago — sin obligación, es solo una gentileza que se agradece.
+      <div class="alias" id="alias-box" title="Tocar para copiar">pure.bares.mp&nbsp; 📋</div>
+    </div>
+  </footer>
+</main>
+
+<div class="mobile-sticky">
+  <span>Total: <span class="amount" id="sticky-total">$ 0,00</span></span>
+  <button type="button" onclick="document.getElementById('resultado').scrollIntoView({behavior:'smooth'})">Ver detalle</button>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+
+  const fields = {
+    regimenLaboral: $('regimenLaboral'),
+    ingreso: $('ingreso'), egreso: $('egreso'), remuneracion: $('remuneracion'),
+    sacBase: $('sacBase'), tope: $('tope'), caratula: $('caratula'),
+    firmaNombre: $('firmaNombre'), firmaEmail: $('firmaEmail'), firmaTelefono: $('firmaTelefono'),
+    situacionEspecial: $('situacionEspecial'),
+    preavisoFlag: $('preavisoFlag'),
+    art8Flag: $('art8Flag'), art8Cant: $('art8Cant'),
+    art9Flag: $('art9Flag'), art9Cant: $('art9Cant'),
+    art10Flag: $('art10Flag'), art10Porcion: $('art10Porcion'), art10Meses: $('art10Meses'),
+    art15Flag: $('art15Flag'), art1Flag: $('art1Flag'), art2Flag: $('art2Flag'), art80Flag: $('art80Flag')
+  };
+
+  // ---- Situaciones especiales disponibles según el marco normativo ----
+  const SITUACIONES = {
+    lct: [
+      {value:'general', label:'Régimen general'},
+      {value:'fuerza_mayor', label:'Fuerza mayor / falta de trabajo (art. 247 LCT)'},
+      {value:'fallecimiento', label:'Fallecimiento del trabajador (art. 248 LCT)'},
+      {value:'periodo_prueba', label:'Período de prueba'},
+    ],
+    casas_particulares: [
+      {value:'general', label:'Régimen general'},
+      {value:'fallecimiento', label:'Fallecimiento de la trabajadora/or (art. 46 inc. c, L.26.844)'},
+      {value:'muerte_empleador', label:'Muerte del empleador o de la persona asistida (art. 46 inc. e/f, L.26.844)'},
+    ]
+  };
+
+  function populateSituaciones(){
+    const regimenL = fields.regimenLaboral.value;
+    const opciones = SITUACIONES[regimenL];
+    const sel = fields.situacionEspecial;
+    const previo = sel.value;
+    sel.innerHTML = '';
+    opciones.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o.value;
+      opt.textContent = o.label;
+      sel.appendChild(opt);
+    });
+    sel.value = opciones.some(o => o.value === previo) ? previo : 'general';
+  }
+
+  const REGIME_CUTOFF = new Date(2026, 5, 1);
+
+  function fmtMoney(n){
+    if(!isFinite(n)) n = 0;
+    return "$ " + new Intl.NumberFormat('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n);
+  }
+  function fmtDate(d){
+    if(!d) return "—";
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    return `${dd}/${mm}/${d.getFullYear()}`;
+  }
+
+  // ---- Firma para el documento (opcional) ----
+  function firmaLine(){
+    const nombre = fields.firmaNombre.value.trim();
+    const email = fields.firmaEmail.value.trim();
+    const tel = fields.firmaTelefono.value.trim();
+    if(!nombre && !email && !tel){
+      return "Equipo Legal Capozzi — Herramientas para el ejercicio del derecho laboral";
+    }
+    const partes = [nombre, email, tel].filter(Boolean);
+    return partes.join(' · ');
+  }
+
+  // ---- Fecha con máscara propia DD/MM/AAAA (no depende del idioma del navegador) ----
+  function parseMaskedDate(str){
+    const m = String(str||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(!m) return null;
+    const dd = parseInt(m[1],10), mm = parseInt(m[2],10), yyyy = parseInt(m[3],10);
+    if(mm < 1 || mm > 12) return null;
+    const daysInM = new Date(yyyy, mm, 0).getDate();
+    if(dd < 1 || dd > daysInM) return null;
+    return new Date(yyyy, mm-1, dd);
+  }
+  function formatDateMaskLive(el){
+    const cursorFromEnd = el.value.length - el.selectionStart;
+    const digits = el.value.replace(/\D/g,'').slice(0,8);
+    const dd = digits.slice(0,2), mm = digits.slice(2,4), yyyy = digits.slice(4,8);
+    let out = dd;
+    if(mm) out += '/' + mm;
+    if(yyyy) out += '/' + yyyy;
+    el.value = out;
+    const newPos = Math.max(0, out.length - cursorFromEnd);
+    el.setSelectionRange(newPos, newPos);
+  }
+
+  // ---- Formato numérico argentino en vivo (punto de miles, coma decimal) ----
+  function parseArNumber(str){
+    if(!str) return 0;
+    const cleaned = String(str).replace(/\./g, '').replace(',', '.');
+    const n = parseFloat(cleaned);
+    return isNaN(n) ? 0 : n;
+  }
+  function formatArLive(el){
+    const cursorFromEnd = el.value.length - el.selectionStart;
+    let raw = el.value.replace(/[^\d,]/g, '');
+    const firstComma = raw.indexOf(',');
+    if(firstComma !== -1){
+      raw = raw.slice(0, firstComma+1) + raw.slice(firstComma+1).replace(/,/g, '');
+    }
+    let [intPart, decPart] = raw.split(',');
+    intPart = (intPart || '').replace(/^0+(?=\d)/, '');
+    if(decPart !== undefined) decPart = decPart.slice(0,2);
+    const groupedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const newValue = groupedInt + (decPart !== undefined ? ',' + decPart : (raw.endsWith(',') ? ',' : ''));
+    el.value = newValue;
+    const newPos = Math.max(0, newValue.length - cursorFromEnd);
+    el.setSelectionRange(newPos, newPos);
+  }
+
+  function edate(date, months){
+    const day = date.getDate();
+    const d = new Date(date.getFullYear(), date.getMonth(), 1);
+    d.setMonth(d.getMonth() + months);
+    const lastDay = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+    d.setDate(Math.min(day, lastDay));
+    return d;
+  }
+
+  function fullYears(d1, d2){
+    let years = d2.getFullYear() - d1.getFullYear();
+    const anniv = new Date(d1.getFullYear()+years, d1.getMonth(), d1.getDate());
+    if(anniv > d2) years--;
+    return Math.max(0, years);
+  }
+
+  // convención 30/360: días entre d1 y d2 (inclusive), tapando el día en 30
+  function commercialDaysInclusive(d1, d2){
+    const day1 = Math.min(d1.getDate(), 30);
+    const day2 = Math.min(d2.getDate(), 30);
+    return (d2.getFullYear()-d1.getFullYear())*360 + (d2.getMonth()-d1.getMonth())*30 + (day2-day1) + 1;
+  }
+
+  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+  function calcular(){
+    const ingreso = parseMaskedDate(fields.ingreso.value);
+    const egreso = parseMaskedDate(fields.egreso.value);
+    const rem = parseArNumber(fields.remuneracion.value);
+    const regimenL = fields.regimenLaboral.value; // 'lct' | 'casas_particulares'
+
+    // régimen aplicable dentro de la LCT, determinado automáticamente por la fecha de ingreso
+    // (Ley 27.802 desde el 1/6/2026; antes, el art. 245 LCT en su versión previa).
+    // No aplica a personal de casas particulares (Ley 26.844), que tiene su propio artículo 48
+    // sin distinción de SAC en la base ni tope convencional.
+    const regimen = (ingreso && ingreso >= REGIME_CUTOFF) ? '27802' : 'anterior';
+    const mostrarCamposLct = regimenL === 'lct';
+    $('campo-sac').style.display = (mostrarCamposLct && regimen === 'anterior') ? '' : 'none';
+    $('campo-tope').style.display = (mostrarCamposLct && regimen === '27802') ? '' : 'none';
+
+    const articuloAntig = regimenL === 'casas_particulares' ? 'art. 48 L.26.844' : 'art. 245 LCT';
+    if(!ingreso || !egreso || egreso < ingreso){
+      $('periodos-info').textContent = `Períodos indemnizatorios (${articuloAntig}): completá ingreso y egreso.`;
+    }
+
+    const validDates = ingreso && egreso && egreso >= ingreso;
+
+    // ---- Períodos (mismo mecanismo en LCT y en L.26.844: un período por año o fracción mayor a 3 meses) ----
+    let periodos = 0;
+    if(validDates){
+      const years = fullYears(ingreso, egreso);
+      const aniversario = edate(ingreso, years*12);
+      const umbral = edate(aniversario, 3);
+      periodos = Math.max(1, years + (egreso > umbral ? 1 : 0));
+      $('periodos-info').textContent = `Períodos indemnizatorios (${articuloAntig}): ${periodos}`;
+    }
+
+    // ---- Situación especial ----
+    const situacion = fields.situacionEspecial.value;
+    const esFuerzaMayor = situacion === 'fuerza_mayor';
+    const esFallecimiento = situacion === 'fallecimiento';
+    const esMuerteEmpleador = situacion === 'muerte_empleador';
+    const esPeriodoPrueba = situacion === 'periodo_prueba';
+    const antigAlMedio = esFuerzaMayor || esFallecimiento || esMuerteEmpleador;
+    const sinPreavisoNiIntegracion = esFallecimiento || esMuerteEmpleador || esPeriodoPrueba;
+
+    fields.preavisoFlag.disabled = sinPreavisoNiIntegracion;
+    if(sinPreavisoNiIntegracion){
+      fields.preavisoFlag.checked = false;
+    }
+
+    const notaEl = $('situacion-nota');
+    if(esFuerzaMayor){
+      notaEl.textContent = 'Antigüedad reducida al 50% (art. 247 LCT). Preaviso e integración se pagan según corresponda.';
+      notaEl.style.display = '';
+    } else if(esFallecimiento){
+      notaEl.textContent = regimenL === 'casas_particulares'
+        ? 'Antigüedad reducida al 50% (art. 46 inc. c, L.26.844). No corresponde preaviso ni integración.'
+        : 'Antigüedad reducida al 50% (art. 248 LCT). No corresponde preaviso ni integración.';
+      notaEl.style.display = '';
+    } else if(esMuerteEmpleador){
+      notaEl.textContent = 'Antigüedad reducida al 50% (art. 46 inc. e/f, L.26.844). No corresponde preaviso ni integración.';
+      notaEl.style.display = '';
+    } else if(esPeriodoPrueba){
+      notaEl.textContent = 'No corresponde antigüedad, preaviso ni integración — solo la liquidación final.';
+      notaEl.style.display = '';
+    } else {
+      notaEl.style.display = 'none';
+    }
+
+    // ---- Base y antigüedad ----
+    const sacBase = (mostrarCamposLct && regimen === 'anterior') ? (parseFloat(fields.sacBase.value) || 0) : 0;
+    let base245 = rem + sacBase;
+    const tope = (mostrarCamposLct && regimen === '27802') ? (parseFloat(fields.tope.value) || 0) : 0;
+    if(tope > 0 && base245 > tope) base245 = tope;
+    let antig = base245 * periodos;
+    if(antigAlMedio) antig = antig / 2;
+    if(esPeriodoPrueba) antig = 0;
+
+    // ---- Preaviso ----
+    // LCT (art. 231/232): 1 mes si la antigüedad no supera los 5 años, 2 meses si los supera.
+    // Casas particulares (art. 42/43 L.26.844): 10 días si la antigüedad es menor a 1 año, 30 días si es mayor.
+    const preavisoFlag = sinPreavisoNiIntegracion ? false : fields.preavisoFlag.checked;
+    let preavisoMonto = 0;
+    if(regimenL === 'casas_particulares'){
+      let diasPreaviso = 0;
+      if(validDates){
+        const umbral1 = edate(ingreso, 12);
+        diasPreaviso = egreso > umbral1 ? 30 : 10;
+        $('preaviso-meses').textContent = diasPreaviso;
+      } else {
+        $('preaviso-meses').textContent = '—';
+      }
+      $('preaviso-unidad').textContent = 'día(s) de preaviso';
+      $('preaviso-articulo').textContent = '(art. 42 L.26.844)';
+      preavisoMonto = preavisoFlag ? (rem/30) * diasPreaviso : 0;
+    } else {
+      let mesesPreaviso = 0;
+      if(validDates){
+        const umbral5 = edate(ingreso, 60);
+        mesesPreaviso = egreso > umbral5 ? 2 : 1;
+        $('preaviso-meses').textContent = mesesPreaviso;
+      } else {
+        $('preaviso-meses').textContent = '—';
+      }
+      $('preaviso-unidad').textContent = 'mes(es) de preaviso';
+      $('preaviso-articulo').textContent = '(art. 231 LCT)';
+      preavisoMonto = preavisoFlag ? rem * mesesPreaviso : 0;
+    }
+    const sacPreaviso = preavisoFlag ? preavisoMonto/12 : 0;
+
+    // ---- Integración del mes de despido (mismo mecanismo en LCT y en L.26.844) ----
+    // Se calcula solo: corresponde siempre que el egreso no coincida con el último día del
+    // mes, salvo que la situación especial la excluya (fallecimiento, muerte del empleador,
+    // período de prueba).
+    const diasUltMes = egreso ? egreso.getDate() : 0;
+    const daysInMonth = egreso ? new Date(egreso.getFullYear(), egreso.getMonth()+1, 0).getDate() : 30;
+    const integracionMonto = sinPreavisoNiIntegracion ? 0 : (rem/daysInMonth)*(daysInMonth-diasUltMes);
+    const sacIntegracion = integracionMonto/12;
+
+    // ---- Arts. 24.013 / 25.323 / 80 LCT ----
+    const art8Monto = fields.art8Flag.checked ? (rem/4)*(parseFloat(fields.art8Cant.value)||0) : 0;
+    const art9Monto = fields.art9Flag.checked ? (rem/4)*(parseFloat(fields.art9Cant.value)||0) : 0;
+    const art10Monto = fields.art10Flag.checked ? ((parseFloat(fields.art10Porcion.value)||0)/4)*(parseFloat(fields.art10Meses.value)||0) : 0;
+    const art15Monto = fields.art15Flag.checked ? (antig+preavisoMonto+integracionMonto) : 0;
+    const art1Monto = fields.art1Flag.checked ? antig : 0;
+    const art2Monto = fields.art2Flag.checked ? (antig+preavisoMonto+integracionMonto)/2 : 0;
+    const art80Monto = fields.art80Flag.checked ? rem*3 : 0;
+
+    const subtotalRubros = antig+preavisoMonto+sacPreaviso+integracionMonto+sacIntegracion+
+                            art8Monto+art9Monto+art10Monto+art15Monto+art1Monto+art2Monto+art80Monto;
+
+    // ---- Liquidación final ----
+    let diasVacCorresp = 14, diasTrabAnio = 0, diasSem = 0;
+    if(validDates){
+      const antigAl31_12 = fullYears(ingreso, new Date(egreso.getFullYear(), 11, 31));
+      diasVacCorresp = antigAl31_12 <= 5 ? 14 : antigAl31_12 <= 10 ? 21 : antigAl31_12 <= 20 ? 28 : 35;
+
+      const yearStart = new Date(egreso.getFullYear(), 0, 1);
+      const effYearStart = ingreso > yearStart ? ingreso : yearStart;
+      diasTrabAnio = clamp(commercialDaysInclusive(effYearStart, egreso), 0, 360);
+
+      const semStart = egreso.getMonth() <= 5 ? new Date(egreso.getFullYear(),0,1) : new Date(egreso.getFullYear(),6,1);
+      const effSemStart = ingreso > semStart ? ingreso : semStart;
+      diasSem = clamp(commercialDaysInclusive(effSemStart, egreso), 0, 180);
+    }
+    const diasProp = (diasTrabAnio*diasVacCorresp)/360;
+    const valorDia = rem/25;
+    const vacTotal = valorDia*diasProp;
+    const sacVac = vacTotal/12;
+
+    const diasTrabMes = diasUltMes;
+    const liqDias = (rem/daysInMonth)*diasTrabMes;
+    const sacDias = liqDias/12;
+
+    const mejorSueldo = rem;
+    const sacSem = (mejorSueldo/2)*diasSem/180;
+
+    const subtotalLiq = vacTotal+sacVac+liqDias+sacDias+sacSem;
+    const total = subtotalRubros + subtotalLiq;
+
+    // ---- Volcar a la UI ----
+    const caratula = fields.caratula.value.trim();
+    const caratulaLine = $('r-caratula-line');
+    if(caratula){
+      caratulaLine.textContent = caratula;
+      caratulaLine.style.display = '';
+    } else {
+      caratulaLine.style.display = 'none';
+    }
+
+    $('r-ingreso').textContent = fmtDate(ingreso);
+    $('r-egreso').textContent = fmtDate(egreso);
+    $('r-rem').textContent = fmtMoney(rem);
+    $('r-periodos').textContent = validDates ? periodos : "—";
+
+    const setLine = (id, value) => {
+      const el = $(id);
+      el.textContent = fmtMoney(value);
+      el.parentElement.classList.toggle('zero', Math.abs(value) < 0.005);
+    };
+    setLine('r-antig', antig);
+    $('r-antig-nota').textContent = (esFuerzaMayor || esFallecimiento) ? '(50%)' : (esPeriodoPrueba ? '(no corresponde)' : '');
+    setLine('r-preaviso', preavisoMonto);
+    setLine('r-sacpreaviso', sacPreaviso);
+    setLine('r-integracion', integracionMonto);
+    setLine('r-sacintegracion', sacIntegracion);
+    setLine('r-art8', art8Monto);
+    setLine('r-art9', art9Monto);
+    setLine('r-art10', art10Monto);
+    setLine('r-art15', art15Monto);
+    setLine('r-art1', art1Monto);
+    setLine('r-art2', art2Monto);
+    setLine('r-art80', art80Monto);
+    $('r-subtotal-rubros').textContent = fmtMoney(subtotalRubros);
+
+    setLine('r-liqdias', liqDias);
+    setLine('r-sacdias', sacDias);
+    setLine('r-vacaciones', vacTotal);
+    setLine('r-sacvac', sacVac);
+    setLine('r-sacsem', sacSem);
+    $('r-subtotal-liq').textContent = fmtMoney(subtotalLiq);
+
+    const totalEl = $('r-total');
+    totalEl.textContent = fmtMoney(total);
+    totalEl.classList.add('flash');
+    setTimeout(()=>totalEl.classList.remove('flash'), 350);
+    $('sticky-total').textContent = fmtMoney(total);
+    $('print-authorship').textContent = firmaLine();
+
+    return {
+      caratula, ingreso, egreso, rem, periodos: validDates?periodos:0, antig, preavisoMonto, sacPreaviso,
+      integracionMonto, sacIntegracion, liqDias, sacDias, vacTotal, sacVac, sacSem,
+      art8Monto, art9Monto, art10Monto, art15Monto, art1Monto, art2Monto, art80Monto, total
+    };
+  }
+
+  function buildTextSummary(){
+    const r = calcular();
+    const L = (label, value) => `${label}\t${value}\n`;
+    let out = "";
+    if(r.caratula) out += `${r.caratula}\n\n`;
+    out += L("INGRESO", fmtDate(r.ingreso));
+    out += L("EGRESO", fmtDate(r.egreso));
+    out += L("REMUNERACIÓN", fmtMoney(r.rem));
+    out += L("PERIODOS", r.periodos || "—");
+    out += "\n";
+    out += L("ANTIGÜEDAD", fmtMoney(r.antig));
+    out += L("PREAVISO", fmtMoney(r.preavisoMonto));
+    out += L("SAC S/ PREAVISO", fmtMoney(r.sacPreaviso));
+    out += L("INTEGRACION MES", fmtMoney(r.integracionMonto));
+    out += L("SAC S/ INTEGRACION", fmtMoney(r.sacIntegracion));
+    out += L("DIAS TRABAJADOS DEL MES DE DESPIDO", fmtMoney(r.liqDias));
+    out += L("SAC S/ DIAS TRABAJADOS MES DE DESPIDO", fmtMoney(r.sacDias));
+    out += L("VACACIONES PROPORCIONALES", fmtMoney(r.vacTotal));
+    out += L("SAC S/ VACACIONES PROPORCIONALES", fmtMoney(r.sacVac));
+    out += L("SAC PROPORCIONAL DEL SEMESTRE", fmtMoney(r.sacSem));
+    out += L("ART. 8 24013", fmtMoney(r.art8Monto));
+    out += L("ART. 9 24013", fmtMoney(r.art9Monto));
+    out += L("ART. 10 24013", fmtMoney(r.art10Monto));
+    out += L("ART. 15 24013", fmtMoney(r.art15Monto));
+    out += "\n";
+    out += L("ART. 1 25323", fmtMoney(r.art1Monto));
+    out += L("ART. 2 25323", fmtMoney(r.art2Monto));
+    out += L("ART. 80 LCT", fmtMoney(r.art80Monto));
+    out += L("TOTAL", fmtMoney(r.total));
+    out += `\n${firmaLine()}\n`;
+    return out;
+  }
+
+  // ---- Botones ----
+  $('btn-copiar').addEventListener('click', async () => {
+    const text = buildTextSummary();
+    const feedback = $('copy-feedback');
+    try{
+      await navigator.clipboard.writeText(text);
+      feedback.textContent = "Copiado. Pegalo en Word con Ctrl+V.";
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); feedback.textContent = "Copiado. Pegalo en Word con Ctrl+V."; }
+      catch(e2){ feedback.textContent = "No se pudo copiar automáticamente. Seleccioná y copiá manualmente."; }
+      document.body.removeChild(ta);
+    }
+    setTimeout(()=>{ feedback.textContent = ""; }, 4000);
+  });
+
+  $('btn-imprimir').addEventListener('click', () => window.print());
+
+  $('btn-email').addEventListener('click', () => {
+    const text = buildTextSummary();
+    const caratula = fields.caratula.value.trim();
+    const subjectBase = caratula ? `Liquidación — ${caratula}` : "Liquidación por despido";
+    const subject = encodeURIComponent(`${subjectBase}`);
+    const body = encodeURIComponent(text + "\n---\nGenerado con la Calculadora de Despido y Liquidación Final.\nDatos estimativos, sujetos a revisión profesional.");
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  });
+
+  $('alias-box').addEventListener('click', async () => {
+    try{
+      await navigator.clipboard.writeText('pure.bares.mp');
+      const el = $('alias-box');
+      const original = el.innerHTML;
+      el.innerHTML = "Copiado ✓";
+      setTimeout(()=>{ el.innerHTML = original; }, 1600);
+    }catch(e){ /* silencioso: no rompe la experiencia si el navegador no permite copiar */ }
+  });
+
+  // ---- Escuchar cambios ----
+  fields.remuneracion.addEventListener('input', () => { formatArLive(fields.remuneracion); calcular(); });
+  fields.ingreso.addEventListener('input', () => { formatDateMaskLive(fields.ingreso); calcular(); });
+  fields.egreso.addEventListener('input', () => { formatDateMaskLive(fields.egreso); calcular(); });
+  fields.regimenLaboral.addEventListener('change', () => { populateSituaciones(); calcular(); });
+  const specialFields = [fields.remuneracion, fields.ingreso, fields.egreso, fields.regimenLaboral];
+  Object.values(fields).filter(Boolean).filter(el => !specialFields.includes(el)).forEach(el => {
+    el.addEventListener('input', calcular);
+    el.addEventListener('change', calcular);
+  });
+
+  // Fecha de generación, para el pie del documento impreso
+  (function setPrintDate(){
+    const hoy = new Date();
+    const dd = String(hoy.getDate()).padStart(2,'0');
+    const mm = String(hoy.getMonth()+1).padStart(2,'0');
+    $('print-date').textContent = `Generado el ${dd}/${mm}/${hoy.getFullYear()}`;
+  })();
+
+  populateSituaciones();
+  calcular();
+})();
+</script>
+
+</body>
+</html>
